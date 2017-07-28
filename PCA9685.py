@@ -21,6 +21,12 @@ ALL_LED_OFF_H = 0xFD
 PRESCALE = 0xFE		
 LED_MULTIPLIER = 4
 CLOCK_FREQ = 25000000
+
+mg90_0 = 205
+mg90_45 = 328
+mg90_90 = 410
+mg90_135 = 523
+mg90_180 = 615
 #----------------------------------
 
 #--------DIAGNOSTICS------------------------------------------------------------
@@ -77,13 +83,13 @@ def MODE1_probe(raw = bus.read_byte_data(addr,MODE1)):
     return   
 def MODE2_probe(raw = bus.read_byte_data(addr,MODE2)):
     '''
-          MODE1_probe(raw = bus.read_byte_data(addr,MODE2))
+          MODE2_probe(raw = bus.read_byte_data(addr,MODE2))
           Affiche l'état actuel du registre MODE2 et la signification de chaque bit.
           Option :
           raw: byte, pour tester l'état de MODE2 pour un byte précis'''
     
     raw = bin(raw)[2:]
-    result = [0 for k in range(8)]
+    result = [0 for k in range(8)] 
     if len(raw) == 1 :
         result[7] = int(raw[0])
     else :
@@ -156,3 +162,8 @@ def set_PWM(channel, time_on, time_off):
 	bus.write_byte_data(addr,LED0_OFF_L + LED_MULTIPLIER * channel, (time_off & 0xFF) )
 	bus.write_byte_data(addr,LED0_OFF_H + LED_MULTIPLIER * channel, (time_off >> 8) )
 	return
+
+def get_PWM(channel):
+	a = bus.read_byte_data(addr,LED0_OFF_L + LED_MULTIPLIER * channel)
+	b = bus.read_byte_data(addr,LED0_OFF_H + LED_MULTIPLIER * channel)
+	return (a + (b << 8))
